@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96701C8D180B2013008EB834 /* irecovery.c in Sources */ = {isa = PBXBuildFile; fileRef = 96701C8C180B2013008EB834 /* irecovery.c */; };
 		96AA17C017F2F8EB003C8B5F /* libirecovery.c in Sources */ = {isa = PBXBuildFile; fileRef = 96AA17B317F2F773003C8B5F /* libirecovery.c */; };
 		96AA17C317F2FA3A003C8B5F /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96AA17C217F2FA3A003C8B5F /* CoreFoundation.framework */; };
 		96AA17C517F2FA57003C8B5F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96AA17C417F2FA57003C8B5F /* IOKit.framework */; };
-		96AA17D317F2FBF7003C8B5F /* irecovery.c in Sources */ = {isa = PBXBuildFile; fileRef = 96AA17B217F2F773003C8B5F /* irecovery.c */; };
 		96AA17D617F2FC0D003C8B5F /* libirecovery.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 96AA17BB17F2F8CA003C8B5F /* libirecovery.dylib */; };
 		96AA17D917F2FC70003C8B5F /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 96AA17D817F2FC70003C8B5F /* libreadline.dylib */; };
 		96AA17DA17F2FFB7003C8B5F /* libirecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 96AA179117F2F773003C8B5F /* libirecovery.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -39,40 +39,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		96701C8B180B2013008EB834 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
+		96701C8C180B2013008EB834 /* irecovery.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = irecovery.c; sourceTree = "<group>"; };
 		96AA178D17F2F773003C8B5F /* autogen.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = autogen.sh; sourceTree = "<group>"; };
 		96AA178E17F2F773003C8B5F /* configure.ac */ = {isa = PBXFileReference; lastKnownFileType = text; path = configure.ac; sourceTree = "<group>"; };
 		96AA179017F2F773003C8B5F /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		96AA179117F2F773003C8B5F /* libirecovery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libirecovery.h; sourceTree = "<group>"; };
-		96AA179317F2F773003C8B5F /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		96AA179417F2F773003C8B5F /* libusb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
-		96AA179517F2F773003C8B5F /* libusbi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libusbi.h; sourceTree = "<group>"; };
-		96AA179717F2F773003C8B5F /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		96AA179817F2F773003C8B5F /* darwin_usb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = darwin_usb.c; sourceTree = "<group>"; };
-		96AA179917F2F773003C8B5F /* darwin_usb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = darwin_usb.h; sourceTree = "<group>"; };
-		96AA179A17F2F773003C8B5F /* libusb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
-		96AA179B17F2F773003C8B5F /* libusbi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libusbi.h; sourceTree = "<group>"; };
-		96AA179C17F2F773003C8B5F /* linux_usbfs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = linux_usbfs.c; sourceTree = "<group>"; };
-		96AA179D17F2F773003C8B5F /* linux_usbfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = linux_usbfs.h; sourceTree = "<group>"; };
-		96AA179E17F2F773003C8B5F /* poll_posix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = poll_posix.h; sourceTree = "<group>"; };
-		96AA179F17F2F773003C8B5F /* poll_windows.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = poll_windows.c; sourceTree = "<group>"; };
-		96AA17A017F2F773003C8B5F /* poll_windows.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = poll_windows.h; sourceTree = "<group>"; };
-		96AA17A117F2F773003C8B5F /* threads_posix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = threads_posix.h; sourceTree = "<group>"; };
-		96AA17A217F2F773003C8B5F /* threads_windows.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = threads_windows.c; sourceTree = "<group>"; };
-		96AA17A317F2F773003C8B5F /* threads_windows.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = threads_windows.h; sourceTree = "<group>"; };
-		96AA17A417F2F773003C8B5F /* windows_usb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = windows_usb.c; sourceTree = "<group>"; };
-		96AA17A517F2F773003C8B5F /* windows_usb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = windows_usb.h; sourceTree = "<group>"; };
 		96AA17A617F2F773003C8B5F /* libirecovery.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = libirecovery.pc.in; sourceTree = "<group>"; };
 		96AA17A717F2F773003C8B5F /* LICENCE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENCE; sourceTree = "<group>"; };
 		96AA17A917F2F773003C8B5F /* as-compiler-flag.m4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "as-compiler-flag.m4"; sourceTree = "<group>"; };
 		96AA17AA17F2F773003C8B5F /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
-		96AA17AB17F2F773003C8B5F /* Makefile.shared */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.shared; sourceTree = "<group>"; };
 		96AA17AC17F2F773003C8B5F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		96AA17AE17F2F773003C8B5F /* boot.irs */ = {isa = PBXFileReference; lastKnownFileType = text; path = boot.irs; sourceTree = "<group>"; };
-		96AA17AF17F2F773003C8B5F /* test.irs */ = {isa = PBXFileReference; lastKnownFileType = text; path = test.irs; sourceTree = "<group>"; };
 		96AA17B117F2F773003C8B5F /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
-		96AA17B217F2F773003C8B5F /* irecovery.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = irecovery.c; sourceTree = "<group>"; };
 		96AA17B317F2F773003C8B5F /* libirecovery.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libirecovery.c; sourceTree = "<group>"; };
-		96AA17B417F2F773003C8B5F /* TODO */ = {isa = PBXFileReference; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		96AA17BB17F2F8CA003C8B5F /* libirecovery.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libirecovery.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		96AA17C217F2FA3A003C8B5F /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		96AA17C417F2FA57003C8B5F /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -102,13 +81,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		96701C8A180B2013008EB834 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				96701C8B180B2013008EB834 /* Makefile.am */,
+				96701C8C180B2013008EB834 /* irecovery.c */,
+			);
+			path = tools;
+			sourceTree = "<group>";
+		};
 		96AA178617F2F71A003C8B5F = {
 			isa = PBXGroup;
 			children = (
 				96AA17B517F2F7CE003C8B5F /* Documentation */,
 				96AA178F17F2F773003C8B5F /* include */,
-				96AA17AD17F2F773003C8B5F /* scripts */,
 				96AA17B017F2F773003C8B5F /* src */,
+				96701C8A180B2013008EB834 /* tools */,
 				96AA17B617F2F848003C8B5F /* autoconf */,
 				96AA17D717F2FC26003C8B5F /* Libraries and Frameworks */,
 				96AA17BC17F2F8CA003C8B5F /* Products */,
@@ -120,42 +108,8 @@
 			children = (
 				96AA179017F2F773003C8B5F /* Makefile.am */,
 				96AA179117F2F773003C8B5F /* libirecovery.h */,
-				96AA179217F2F773003C8B5F /* libusb-1.0 */,
 			);
 			path = include;
-			sourceTree = "<group>";
-		};
-		96AA179217F2F773003C8B5F /* libusb-1.0 */ = {
-			isa = PBXGroup;
-			children = (
-				96AA179317F2F773003C8B5F /* config.h */,
-				96AA179417F2F773003C8B5F /* libusb.h */,
-				96AA179517F2F773003C8B5F /* libusbi.h */,
-				96AA179617F2F773003C8B5F /* os */,
-			);
-			path = "libusb-1.0";
-			sourceTree = "<group>";
-		};
-		96AA179617F2F773003C8B5F /* os */ = {
-			isa = PBXGroup;
-			children = (
-				96AA179717F2F773003C8B5F /* config.h */,
-				96AA179817F2F773003C8B5F /* darwin_usb.c */,
-				96AA179917F2F773003C8B5F /* darwin_usb.h */,
-				96AA179A17F2F773003C8B5F /* libusb.h */,
-				96AA179B17F2F773003C8B5F /* libusbi.h */,
-				96AA179C17F2F773003C8B5F /* linux_usbfs.c */,
-				96AA179D17F2F773003C8B5F /* linux_usbfs.h */,
-				96AA179E17F2F773003C8B5F /* poll_posix.h */,
-				96AA179F17F2F773003C8B5F /* poll_windows.c */,
-				96AA17A017F2F773003C8B5F /* poll_windows.h */,
-				96AA17A117F2F773003C8B5F /* threads_posix.h */,
-				96AA17A217F2F773003C8B5F /* threads_windows.c */,
-				96AA17A317F2F773003C8B5F /* threads_windows.h */,
-				96AA17A417F2F773003C8B5F /* windows_usb.c */,
-				96AA17A517F2F773003C8B5F /* windows_usb.h */,
-			);
-			path = os;
 			sourceTree = "<group>";
 		};
 		96AA17A817F2F773003C8B5F /* m4 */ = {
@@ -166,20 +120,10 @@
 			path = m4;
 			sourceTree = "<group>";
 		};
-		96AA17AD17F2F773003C8B5F /* scripts */ = {
-			isa = PBXGroup;
-			children = (
-				96AA17AE17F2F773003C8B5F /* boot.irs */,
-				96AA17AF17F2F773003C8B5F /* test.irs */,
-			);
-			path = scripts;
-			sourceTree = "<group>";
-		};
 		96AA17B017F2F773003C8B5F /* src */ = {
 			isa = PBXGroup;
 			children = (
 				96AA17B117F2F773003C8B5F /* Makefile.am */,
-				96AA17B217F2F773003C8B5F /* irecovery.c */,
 				96AA17B317F2F773003C8B5F /* libirecovery.c */,
 			);
 			path = src;
@@ -190,7 +134,6 @@
 			children = (
 				96AA17A717F2F773003C8B5F /* LICENCE */,
 				96AA17AC17F2F773003C8B5F /* README */,
-				96AA17B417F2F773003C8B5F /* TODO */,
 			);
 			name = Documentation;
 			sourceTree = "<group>";
@@ -203,7 +146,6 @@
 				96AA17A617F2F773003C8B5F /* libirecovery.pc.in */,
 				96AA17A817F2F773003C8B5F /* m4 */,
 				96AA17AA17F2F773003C8B5F /* Makefile.am */,
-				96AA17AB17F2F773003C8B5F /* Makefile.shared */,
 			);
 			name = autoconf;
 			sourceTree = "<group>";
@@ -315,7 +257,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96AA17D317F2FBF7003C8B5F /* irecovery.c in Sources */,
+				96701C8D180B2013008EB834 /* irecovery.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,6 +465,7 @@
 				96AA17BF17F2F8CA003C8B5F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		96AA17D017F2FBBB003C8B5F /* Build configuration list for PBXNativeTarget "irecovery" */ = {
 			isa = XCConfigurationList;
@@ -531,6 +474,7 @@
 				96AA17D217F2FBBB003C8B5F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

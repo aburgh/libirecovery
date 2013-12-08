@@ -33,3 +33,5 @@ src/.libs
 tools/.libs/*
 tools/irecovery
 .irecovery
+.DS_Store
+xcuserdata

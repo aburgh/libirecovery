@@ -69,7 +69,7 @@
 		96AA179017F2F773003C8B5F /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		96AA179117F2F773003C8B5F /* libirecovery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libirecovery.h; sourceTree = "<group>"; };
 		96AA17A617F2F773003C8B5F /* libirecovery.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = libirecovery.pc.in; sourceTree = "<group>"; };
-		96AA17A717F2F773003C8B5F /* LICENCE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENCE; sourceTree = "<group>"; };
+		96AA17A717F2F773003C8B5F /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		96AA17A917F2F773003C8B5F /* as-compiler-flag.m4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "as-compiler-flag.m4"; sourceTree = "<group>"; };
 		96AA17AA17F2F773003C8B5F /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		96AA17AC17F2F773003C8B5F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
@@ -175,7 +175,7 @@
 		96AA17B517F2F7CE003C8B5F /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
-				96AA17A717F2F773003C8B5F /* LICENCE */,
+				96AA17A717F2F773003C8B5F /* COPYING */,
 				96AA17AC17F2F773003C8B5F /* README */,
 			);
 			name = Documentation;

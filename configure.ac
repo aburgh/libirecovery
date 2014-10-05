@@ -15,7 +15,7 @@ dnl libtool versioning
 #                 changes to the signature and the semantic)
 #  ? :+1 : ?   == just internal changes
 # CURRENT : REVISION : AGE
-LIBIRECOVERY_SO_VERSION=2:0:0
+LIBIRECOVERY_SO_VERSION=2:1:0
 
 AC_SUBST(LIBIRECOVERY_SO_VERSION)
 
@@ -87,8 +87,13 @@ case ${host_os} in
 esac
 AM_CONDITIONAL(WIN32, test x$win32 = xtrue)
 
-AS_COMPILER_FLAGS(GLOBAL_CFLAGS, "-Wall -Wextra -Wmissing-declarations -Wredundant-decls -Wshadow -Wpointer-arith -Wwrite-strings -Wswitch-default -Wno-unused-parameter")
+AS_COMPILER_FLAGS(GLOBAL_CFLAGS, "-Wall -Wextra -Wmissing-declarations -Wredundant-decls -Wshadow -Wpointer-arith -Wwrite-strings -Wswitch-default -Wno-unused-parameter -fvisibility=hidden")
 AC_SUBST(GLOBAL_CFLAGS)
+
+case "$GLOBAL_CFLAGS" in
+	*-fvisibility=hidden*)
+		AC_DEFINE([HAVE_FVISIBILITY], [1], [Define if compiled with -fvisibility=hidden])
+esac
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 

@@ -2,7 +2,7 @@
  * libirecovery.c
  * Communication to iBoot/iBSS on Apple iOS devices via USB
  *
- * Copyright (c) 2012-2013 Martin Szulecki <m.szulecki@libimobiledevice.org>
+ * Copyright (c) 2012-2015 Martin Szulecki <martin.szulecki@libimobiledevice.org>
  * Copyright (c) 2010 Chronic-Dev Team
  * Copyright (c) 2010 Joshua Hill
  * Copyright (c) 2008-2011 Nicolas Haunold
@@ -31,7 +31,7 @@
 
 #ifndef WIN32
 #ifndef USE_IOKIT
-#include <libusb-1.0/libusb.h>
+#include <libusb.h>
 #else
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/usb/IOUSBLib.h>
@@ -43,7 +43,6 @@
 #else
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef interface
 #include <setupapi.h>
 #define _FMT_qX "%I64X"
 #define _FMT_016llx "%016I64x"
@@ -66,9 +65,9 @@
 
 struct irecv_client_private {
 	int debug;
-	int config;
-	int interface;
-	int alt_interface;
+	int usb_config;
+	int usb_interface;
+	int usb_alt_interface;
 	unsigned int mode;
 	struct irecv_device_info device_info;
 #ifndef WIN32
@@ -120,6 +119,8 @@ static struct irecv_device irecv_devices[] = {
 	{"iPhone5,4",  "n49ap", 0x0e, 0x8950 },
 	{"iPhone6,1",  "n51ap", 0x00, 0x8960 },
 	{"iPhone6,2",  "n53ap", 0x02, 0x8960 },
+	{"iPhone7,1",  "n56ap", 0x04, 0x7000 },
+	{"iPhone7,2",  "n61ap", 0x06, 0x7000 },
 	{"iPod1,1",    "n45ap", 0x02, 0x8900 },
 	{"iPod2,1",    "n72ap", 0x00, 0x8920 },
 	{"iPod3,1",    "n18ap", 0x02, 0x8922 },
@@ -144,6 +145,11 @@ static struct irecv_device irecv_devices[] = {
 	{"iPad4,4",    "j85ap", 0x0a, 0x8960 },
 	{"iPad4,5",    "j86ap", 0x0c, 0x8960 },
 	{"iPad4,6",    "j87ap", 0x0e, 0x8960 },
+	{"iPad4,7",   "j85map", 0x32, 0x8960 },
+	{"iPad4,8",   "j86map", 0x34, 0x8960 },
+	{"iPad4,9",   "j87map", 0x36, 0x8960 },
+	{"iPad5,3",    "j81ap", 0x06, 0x7001 },
+	{"iPad5,4",    "j82ap", 0x02, 0x7001 },
 	{"AppleTV2,1", "k66ap", 0x10, 0x8930 },
 	{"AppleTV3,1", "j33ap", 0x08, 0x8942 },
 	{"AppleTV3,2","j33iap", 0x00, 0x8947 },
@@ -469,10 +475,9 @@ typedef struct usb_control_request {
 	char data[];
 } usb_control_request;
 
-static int irecv_get_string_descriptor_ascii(irecv_client_t client, uint8_t desc_index, unsigned char * buffer, int size);
-
 irecv_error_t mobiledevice_openpipes(irecv_client_t client);
 void mobiledevice_closepipes(irecv_client_t client);
+irecv_error_t mobiledevice_connect(irecv_client_t* client, unsigned long long ecid);
 
 irecv_error_t mobiledevice_connect(irecv_client_t* client, unsigned long long ecid) {
 	int found = 0;
@@ -538,12 +543,12 @@ irecv_error_t mobiledevice_connect(irecv_client_t* client, unsigned long long ec
 				*p = '\0';
 			}
 
-			int j;
+			unsigned int j;
 			for (j = 0; j < strlen(serial_str); j++) {
 				if (serial_str[j] == '_') {
 					serial_str[j] = ' ';
 				} else {
-					serial_str[j] = toupper(serial_str[j]);	
+					serial_str[j] = toupper(serial_str[j]);
 				}
 			}
 
@@ -551,7 +556,7 @@ irecv_error_t mobiledevice_connect(irecv_client_t* client, unsigned long long ec
 			irecv_copy_nonce_with_tag(_client, "NONC", &_client->device_info.ap_nonce, &_client->device_info.ap_nonce_size);
 			irecv_copy_nonce_with_tag(_client, "SNON", &_client->device_info.sep_nonce, &_client->device_info.sep_nonce_size);
 
-			if (ecid != 0) {	
+			if (ecid != 0) {
 				if (_client->device_info.ecid != ecid) {
 					mobiledevice_closepipes(_client);
 					continue;
@@ -616,7 +621,7 @@ irecv_error_t mobiledevice_connect(irecv_client_t* client, unsigned long long ec
 				*p = '\0';
 			}
 
-			int j;
+			unsigned int j;
 			for (j = 0; j < strlen(serial_str); j++) {
 				if (serial_str[j] == '_') {
 					serial_str[j] = ' ';
@@ -776,7 +781,7 @@ int iokit_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, u
 }
 #endif
 
-int irecv_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, uint8_t b_request, uint16_t w_value, uint16_t w_index, unsigned char *data, uint16_t w_length, unsigned int timeout) {
+IRECV_API int irecv_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, uint8_t b_request, uint16_t w_value, uint16_t w_index, unsigned char *data, uint16_t w_length, unsigned int timeout) {
 #ifndef WIN32
 #ifdef USE_IOKIT
 	return iokit_usb_control_transfer(client, bm_request_type, b_request, w_value, w_index, data, w_length, timeout);
@@ -880,7 +885,7 @@ static int iokit_usb_bulk_transfer(irecv_client_t client,
 }
 #endif
 
-int irecv_usb_bulk_transfer(irecv_client_t client,
+IRECV_API int irecv_usb_bulk_transfer(irecv_client_t client,
 							unsigned char endpoint,
 							unsigned char *data,
 							int length,
@@ -1206,7 +1211,7 @@ IRECV_API irecv_error_t irecv_open_with_ecid(irecv_client_t* pclient, unsigned l
 				}
 
 				memset(client, '\0', sizeof(struct irecv_client_private));
-				client->interface = 0;
+				client->usb_interface = 0;
 				client->handle = usb_handle;
 				client->mode = usb_descriptor.idProduct;
 
@@ -1305,7 +1310,8 @@ IRECV_API irecv_error_t irecv_usb_set_configuration(irecv_client_t client, int c
 		}
 	}
 #endif
-	client->config = configuration;
+
+	client->usb_config = configuration;
 #endif
 
 	return IRECV_E_SUCCESS;
@@ -1415,8 +1421,8 @@ IRECV_API irecv_error_t irecv_usb_set_interface(irecv_client_t client, int usb_i
 		return IRECV_E_USB_INTERFACE;
 	}
 #endif
-	client->interface = usb_interface;
-	client->alt_interface = usb_alt_interface;
+	client->usb_interface = usb_interface;
+	client->usb_alt_interface = usb_alt_interface;
 
 	return IRECV_E_SUCCESS;
 }
@@ -1549,7 +1555,7 @@ IRECV_API irecv_error_t irecv_close(irecv_client_t client) {
 #else
 		if (client->handle != NULL) {
 			if ((client->mode != IRECV_K_DFU_MODE) && (client->mode != IRECV_K_WTF_MODE)) {
-				libusb_release_interface(client->handle, client->interface);
+				libusb_release_interface(client->handle, client->usb_interface);
 			}
 			libusb_close(client->handle);
 			client->handle = NULL;
@@ -1658,9 +1664,9 @@ IRECV_API irecv_error_t irecv_send_file(irecv_client_t client, const char* filen
 		return IRECV_E_FILE_NOT_FOUND;
 	}
 
-	fseek(file, 0, SEEK_END);
-	long length = ftell(file);
-	fseek(file, 0, SEEK_SET);
+	fseeko(file, 0, SEEK_END);
+	long length = ftello(file);
+	fseeko(file, 0, SEEK_SET);
 
 	char* buffer = (char*) malloc(length);
 	if (buffer == NULL) {

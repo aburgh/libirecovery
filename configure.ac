@@ -17,7 +17,11 @@ dnl libtool versioning
 # CURRENT : REVISION : AGE
 LIBIRECOVERY_SO_VERSION=2:1:0
 
+dnl Minimum package versions
+LIBUSB_VERSION=1.0.3
+
 AC_SUBST(LIBIRECOVERY_SO_VERSION)
+AC_SUBST(LIBUSB_VERSION)
 
 # Checks for programs.
 AC_PROG_CC
@@ -26,7 +30,7 @@ AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 
 # Checks for libraries.
-PKG_CHECK_MODULES(libusb, libusb-1.0 >= 1.0.3)
+PKG_CHECK_MODULES(libusb, libusb-1.0 >= $LIBUSB_VERSION)
 
 # Check additional platform flags
 case "$host_os" in
@@ -94,6 +98,33 @@ case "$GLOBAL_CFLAGS" in
 	*-fvisibility=hidden*)
 		AC_DEFINE([HAVE_FVISIBILITY], [1], [Define if compiled with -fvisibility=hidden])
 esac
+
+# check for large file support
+AC_SYS_LARGEFILE
+LFS_CFLAGS=''
+if test "$enable_largefile" != no; then
+	if test "$ac_cv_sys_file_offset_bits" != 'no'; then
+		LFS_CFLAGS="$LFS_CFLAGS -D_FILE_OFFSET_BITS=$ac_cv_sys_file_offset_bits"
+	else
+		AC_MSG_CHECKING(for native large file support)
+		AC_RUN_IFELSE([AC_LANG_SOURCE([#include <unistd.h>
+		  int main (int argc, char **argv)
+		  {
+		      exit(!(sizeof(off_t) == 8));
+		  }])],
+		[ac_cv_sys_file_offset_bits=64; AC_DEFINE(_FILE_OFFSET_BITS,64)
+		 AC_MSG_RESULT(yes)],
+		[AC_MSG_RESULT(no)])
+	fi
+	if test "$ac_cv_sys_large_files" != 'no'; then
+		LFS_CFLAGS="$LFS_CFLAGS -D_LARGE_FILES=1"
+	fi
+	AC_FUNC_FSEEKO
+	if test "$ac_cv_sys_largefile_source" != 'no'; then
+		LFS_CFLAGS="$LFS_CFLAGS -D_LARGEFILE_SOURCE=1"
+	fi
+fi
+AC_SUBST(LFS_CFLAGS)
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 

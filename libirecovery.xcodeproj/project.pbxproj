@@ -390,6 +390,7 @@
 					"$(inherited)",
 					"\"$SRCROOT/include\"",
 					/usr/local/include,
+					"/usr/local/include/libusb-1.0",
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				USER_HEADER_SEARCH_PATHS = "\"$SRCROOT/include\"";
@@ -403,6 +404,7 @@
 					"$(inherited)",
 					"\"$SRCROOT/include\"",
 					/usr/local/include,
+					"/usr/local/include/libusb-1.0",
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				USER_HEADER_SEARCH_PATHS = "\"$SRCROOT/include\"";

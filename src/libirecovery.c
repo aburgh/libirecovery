@@ -121,11 +121,14 @@ static struct irecv_device irecv_devices[] = {
 	{"iPhone6,2",  "n53ap", 0x02, 0x8960 },
 	{"iPhone7,1",  "n56ap", 0x04, 0x7000 },
 	{"iPhone7,2",  "n61ap", 0x06, 0x7000 },
+	{"iPhone8,1",  "n71ap", 0x04, 0x8000 },
+	{"iPhone8,2",  "n66ap", 0x06, 0x8000 },
 	{"iPod1,1",    "n45ap", 0x02, 0x8900 },
 	{"iPod2,1",    "n72ap", 0x00, 0x8920 },
 	{"iPod3,1",    "n18ap", 0x02, 0x8922 },
 	{"iPod4,1",    "n81ap", 0x08, 0x8930 },
 	{"iPod5,1",    "n78ap", 0x00, 0x8942 },
+	{"iPod7,1",   "n102ap", 0x10, 0x7000 },
 	{"iPad1,1",    "k48ap", 0x02, 0x8930 },
 	{"iPad2,1",    "k93ap", 0x04, 0x8940 },
 	{"iPad2,2",    "k94ap", 0x06, 0x8940 },
@@ -148,6 +151,8 @@ static struct irecv_device irecv_devices[] = {
 	{"iPad4,7",   "j85map", 0x32, 0x8960 },
 	{"iPad4,8",   "j86map", 0x34, 0x8960 },
 	{"iPad4,9",   "j87map", 0x36, 0x8960 },
+	{"iPad5,1",    "j96ap", 0x08, 0x7000 },
+	{"iPad5,2",    "j97ap", 0x0A, 0x7000 },
 	{"iPad5,3",    "j81ap", 0x06, 0x7001 },
 	{"iPad5,4",    "j82ap", 0x02, 0x7001 },
 	{"AppleTV2,1", "k66ap", 0x10, 0x8930 },
@@ -733,7 +738,7 @@ static int check_context(irecv_client_t client) {
 	return IRECV_E_SUCCESS;
 }
 
-IRECV_API void irecv_init() {
+IRECV_API void irecv_init(void) {
 #ifndef WIN32
 #ifndef USE_IOKIT
 	libusb_init(&libirecovery_context);
@@ -741,7 +746,7 @@ IRECV_API void irecv_init() {
 #endif
 }
 
-IRECV_API void irecv_exit() {
+IRECV_API void irecv_exit(void) {
 #ifndef WIN32
 #ifndef USE_IOKIT
 	if (libirecovery_context != NULL) {
@@ -779,6 +784,9 @@ int iokit_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, u
 			return IRECV_E_UNKNOWN_ERROR;
 	}
 }
+#endif
+#ifdef __APPLE__
+	void dummy_callback(void) { }
 #endif
 
 IRECV_API int irecv_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, uint8_t b_request, uint16_t w_value, uint16_t w_index, unsigned char *data, uint16_t w_length, unsigned int timeout) {
@@ -2184,7 +2192,7 @@ IRECV_API irecv_error_t irecv_finish_transfer(irecv_client_t client) {
 	return IRECV_E_SUCCESS;
 }
 
-IRECV_API irecv_device_t irecv_devices_get_all() {
+IRECV_API irecv_device_t irecv_devices_get_all(void) {
 	return irecv_devices;
 }
 

@@ -30,7 +30,7 @@
 #include <unistd.h>
 
 #ifndef WIN32
-#ifndef USE_IOKIT
+#ifndef HAVE_IOKIT
 #include <libusb.h>
 #else
 #include <CoreFoundation/CoreFoundation.h>
@@ -71,7 +71,7 @@ struct irecv_client_private {
 	unsigned int mode;
 	struct irecv_device_info device_info;
 #ifndef WIN32
-#ifndef USE_IOKIT
+#ifndef HAVE_IOKIT
 	libusb_device_handle* handle;
 #else
 	IOUSBDeviceInterface320 **handle;
@@ -100,7 +100,7 @@ struct irecv_client_private {
 
 static int libirecovery_debug = 0;
 #ifndef WIN32
-#ifndef USE_IOKIT
+#ifndef HAVE_IOKIT
 static libusb_context* libirecovery_context = NULL;
 #endif
 #endif
@@ -231,7 +231,7 @@ static unsigned int dfu_hash_t1[256] = {
 #define dfu_hash_step(a,b) \
 	a = (dfu_hash_t1[(a & 0xFF) ^ ((unsigned char)b)] ^ (a >> 8))
 
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 static int iokit_get_string_descriptor_ascii(irecv_client_t client, uint8_t desc_index, unsigned char * buffer, int size) {
 
 	IOReturn result;
@@ -706,7 +706,7 @@ void mobiledevice_closepipes(irecv_client_t client) {
 }
 #endif
 
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 static void iokit_cfdictionary_set_short(CFMutableDictionaryRef dict, const void *key, SInt16 value)
 {
 	CFNumberRef numberRef;
@@ -740,7 +740,7 @@ static int check_context(irecv_client_t client) {
 
 IRECV_API void irecv_init(void) {
 #ifndef WIN32
-#ifndef USE_IOKIT
+#ifndef HAVE_IOKIT
 	libusb_init(&libirecovery_context);
 #endif
 #endif
@@ -748,7 +748,7 @@ IRECV_API void irecv_init(void) {
 
 IRECV_API void irecv_exit(void) {
 #ifndef WIN32
-#ifndef USE_IOKIT
+#ifndef HAVE_IOKIT
 	if (libirecovery_context != NULL) {
 		libusb_exit(libirecovery_context);
 		libirecovery_context = NULL;
@@ -757,7 +757,7 @@ IRECV_API void irecv_exit(void) {
 #endif
 }
 
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 int iokit_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, uint8_t b_request, uint16_t w_value, uint16_t w_index, unsigned char *data, uint16_t w_length, unsigned int timeout) {
 
 	IOReturn result;
@@ -791,7 +791,7 @@ int iokit_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, u
 
 IRECV_API int irecv_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, uint8_t b_request, uint16_t w_value, uint16_t w_index, unsigned char *data, uint16_t w_length, unsigned int timeout) {
 #ifndef WIN32
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 	return iokit_usb_control_transfer(client, bm_request_type, b_request, w_value, w_index, data, w_length, timeout);
 #else
 	return libusb_control_transfer(client->handle, bm_request_type, b_request, w_value, w_index, data, w_length, timeout);
@@ -839,7 +839,7 @@ IRECV_API int irecv_usb_control_transfer(irecv_client_t client, uint8_t bm_reque
 #endif
 }
 
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 static int iokit_usb_bulk_transfer(irecv_client_t client,
 						unsigned char endpoint,
 						unsigned char *data,
@@ -902,7 +902,7 @@ IRECV_API int irecv_usb_bulk_transfer(irecv_client_t client,
 	int ret;
 
 #ifndef WIN32
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 	return iokit_usb_bulk_transfer(client, endpoint, data, length, transferred, timeout);
 #else
 	ret = libusb_bulk_transfer(client->handle, endpoint, data, length, transferred, timeout);
@@ -922,7 +922,7 @@ IRECV_API int irecv_usb_bulk_transfer(irecv_client_t client,
 	return ret;
 }
 
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 static irecv_error_t iokit_usb_open_service(irecv_client_t *pclient, io_service_t service) {
 
 	IOReturn result;
@@ -1159,7 +1159,7 @@ IRECV_API irecv_error_t irecv_open_with_ecid(irecv_client_t* pclient, unsigned l
 		irecv_set_debug_level(libirecovery_debug);
 	}
 #ifndef WIN32
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 	return iokit_open_with_ecid(pclient, ecid);
 #else
 	int i = 0;
@@ -1301,7 +1301,7 @@ IRECV_API irecv_error_t irecv_usb_set_configuration(irecv_client_t client, int c
 #ifndef WIN32
 	debug("Setting to configuration %d\n", configuration);
 
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 	IOReturn result;
 
 	result = (*client->handle)->SetConfiguration(client->handle, configuration);
@@ -1325,7 +1325,7 @@ IRECV_API irecv_error_t irecv_usb_set_configuration(irecv_client_t client, int c
 	return IRECV_E_SUCCESS;
 }
 
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 static IOReturn iokit_usb_get_interface(IOUSBDeviceInterface320 **device, uint8_t ifc, io_service_t *usbInterfacep) {
 
 	IOUSBFindInterfaceRequest request;
@@ -1411,7 +1411,7 @@ IRECV_API irecv_error_t irecv_usb_set_interface(irecv_client_t client, int usb_i
 
 	debug("Setting to interface %d:%d\n", usb_interface, usb_alt_interface);
 #ifndef WIN32
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 	if (iokit_usb_set_interface(client, usb_interface, usb_alt_interface) < 0) {
 		return IRECV_E_USB_INTERFACE;
 	}
@@ -1440,7 +1440,7 @@ IRECV_API irecv_error_t irecv_reset(irecv_client_t client) {
 		return IRECV_E_NO_DEVICE;
 
 #ifndef WIN32
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 	IOReturn result;
 
 	result = (*client->handle)->ResetDevice(client->handle);
@@ -1549,7 +1549,7 @@ IRECV_API irecv_error_t irecv_close(irecv_client_t client) {
 			client->disconnected_callback(client, &event);
 		}
 #ifndef WIN32
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 		if (client->usbInterface) {
 			(*client->usbInterface)->USBInterfaceClose(client->usbInterface);
 			(*client->usbInterface)->Release(client->usbInterface);
@@ -1602,7 +1602,7 @@ IRECV_API irecv_error_t irecv_close(irecv_client_t client) {
 IRECV_API void irecv_set_debug_level(int level) {
 	libirecovery_debug = level;
 #ifndef WIN32
-#ifndef USE_IOKIT
+#ifndef HAVE_IOKIT
 	if(libirecovery_context) {
 		libusb_set_debug(libirecovery_context, libirecovery_debug > 2 ? 1: 0);
 	}
@@ -1948,7 +1948,7 @@ IRECV_API const struct irecv_device_info* irecv_get_device_info(irecv_client_t c
 	return &client->device_info;
 }
 
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 static void *iokit_limera1n_usb_submit_request(void *argv) {
 	void **args = argv;
 	IOUSBDeviceInterface320 **dev = args[0];
@@ -1966,7 +1966,7 @@ IRECV_API irecv_error_t irecv_trigger_limera1n_exploit(irecv_client_t client) {
 	if (check_context(client) != IRECV_E_SUCCESS)
 		return IRECV_E_NO_DEVICE;
 
-#ifdef USE_IOKIT
+#ifdef HAVE_IOKIT
 	IOReturn result;
 	IOUSBDevRequestTO req;
 	bzero(&req, sizeof(req));

@@ -122,7 +122,9 @@ static struct irecv_device irecv_devices[] = {
 	{"iPhone7,1",  "n56ap", 0x04, 0x7000 },
 	{"iPhone7,2",  "n61ap", 0x06, 0x7000 },
 	{"iPhone8,1",  "n71ap", 0x04, 0x8000 },
+	{"iPhone8,1", "n71map", 0x04, 0x8003 },
 	{"iPhone8,2",  "n66ap", 0x06, 0x8000 },
+	{"iPhone8,2", "n66map", 0x06, 0x8003 },
 	{"iPod1,1",    "n45ap", 0x02, 0x8900 },
 	{"iPod2,1",    "n72ap", 0x00, 0x8920 },
 	{"iPod3,1",    "n18ap", 0x02, 0x8922 },
@@ -240,7 +242,7 @@ static int iokit_get_string_descriptor_ascii(irecv_client_t client, uint8_t desc
 
 	request.bmRequestType = USBmakebmRequestType(kUSBIn, kUSBStandard, kUSBDevice);
 	request.bRequest = kUSBRqGetDescriptor;
-	request.wValue = (kUSBStringDesc << 8) | desc_index;
+	request.wValue = (kUSBStringDesc << 8); // | desc_index;
 	request.wIndex = 0; // All languages 0x409; // language
 	request.wLength = sizeof(descriptor) - 1;
 	request.pData = descriptor;
@@ -272,7 +274,7 @@ static int iokit_get_string_descriptor_ascii(irecv_client_t client, uint8_t desc
 		}
 		buffer[j] = 0;
 
-		return j;
+		return IRECV_E_SUCCESS;
 	}
 	return IRECV_E_UNKNOWN_ERROR;
 }
@@ -280,7 +282,7 @@ static int iokit_get_string_descriptor_ascii(irecv_client_t client, uint8_t desc
 
 static int irecv_get_string_descriptor_ascii(irecv_client_t client, uint8_t desc_index, unsigned char * buffer, int size) {
 #ifndef WIN32
-#ifdef IOKIT
+#ifdef HAVE_IOKIT
 	return iokit_get_string_descriptor_ascii(client, desc_index, buffer, size);
 #else
 	return libusb_get_string_descriptor_ascii(client->handle, desc_index, buffer, size);
@@ -758,8 +760,8 @@ IRECV_API void irecv_exit(void) {
 }
 
 #ifdef HAVE_IOKIT
-int iokit_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, uint8_t b_request, uint16_t w_value, uint16_t w_index, unsigned char *data, uint16_t w_length, unsigned int timeout) {
-
+static int iokit_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, uint8_t b_request, uint16_t w_value, uint16_t w_index, unsigned char *data, uint16_t w_length, unsigned int timeout)
+{
 	IOReturn result;
 	IOUSBDevRequestTO req;
 
@@ -784,9 +786,10 @@ int iokit_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, u
 			return IRECV_E_UNKNOWN_ERROR;
 	}
 }
-#endif
+#else
 #ifdef __APPLE__
 	void dummy_callback(void) { }
+#endif
 #endif
 
 IRECV_API int irecv_usb_control_transfer(irecv_client_t client, uint8_t bm_request_type, uint8_t b_request, uint16_t w_value, uint16_t w_index, unsigned char *data, uint16_t w_length, unsigned int timeout) {
@@ -872,7 +875,6 @@ static int iokit_usb_bulk_transfer(irecv_client_t client,
 
 	// Do the transfer
 	if (transferDirection == kUSBEndpointDirectionIn) {
-
 		result = (*intf)->ReadPipeTO(intf, pipeRef, data, &size, timeout, timeout);
 		if (result != kIOReturnSuccess)
 			return IRECV_E_PIPE;
@@ -946,12 +948,15 @@ static irecv_error_t iokit_usb_open_service(irecv_client_t *pclient, io_service_
 
 	// Cache the serial string before discarding the service. The service object
 	// has a cached copy, so a request to the hardware device is not required.
-	char serial_str[256] = { 0 };
+	char serial_str[256];
+	serial_str[0] = '\0';
 	serialString = IORegistryEntryCreateCFProperty(service, CFSTR(kUSBSerialNumberString), kCFAllocatorDefault, 0);
 	if (serialString) {
-		CFStringGetCString(serialString, serial_str, sizeof(serial_str) - 1, kCFStringEncodingUTF8);
+		CFStringGetCString(serialString, serial_str, sizeof(serial_str), kCFStringEncodingUTF8);
 		CFRelease(serialString);
 	}
+	irecv_load_device_info_from_iboot_string(client, serial_str);
+
 	IOObjectRelease(service);
 
 	// Create the device interface
@@ -961,7 +966,6 @@ static irecv_error_t iokit_usb_open_service(irecv_client_t *pclient, io_service_
 		free(client);
 		return IRECV_E_UNKNOWN_ERROR;
 	}
-
 
 	(*client->handle)->GetDeviceProduct(client->handle, &mode);
 	(*client->handle)->GetLocationID(client->handle, &locationID);
@@ -974,8 +978,6 @@ static irecv_error_t iokit_usb_open_service(irecv_client_t *pclient, io_service_
 		free(client);
 		return IRECV_E_UNABLE_TO_CONNECT;
 	}
-
-	irecv_load_device_info_from_iboot_string(client, serial_str);
 
 	irecv_copy_nonce_with_tag(client, "NONC", &client->device_info.ap_nonce, &client->device_info.ap_nonce_size);
 	irecv_copy_nonce_with_tag(client, "SNON", &client->device_info.sep_nonce, &client->device_info.sep_nonce_size);
@@ -996,10 +998,17 @@ static irecv_error_t iokit_usb_open_service(irecv_client_t *pclient, io_service_
 		}
 	}
 	else {
-		error = irecv_usb_set_interface(client, 1, 1);
+		error = irecv_usb_set_interface(client, 0, 0);
 		if (error != IRECV_E_SUCCESS) {
 			free(client);
 			return error;
+		}
+		if (client->mode > IRECV_K_RECOVERY_MODE_2) {
+			error = irecv_usb_set_interface(client, 1, 1);
+			if (error != IRECV_E_SUCCESS) {
+				free(client);
+				return error;
+			}
 		}
 	}
 
@@ -1146,9 +1155,6 @@ static irecv_error_t iokit_open_with_ecid(irecv_client_t* pclient, unsigned long
 
 	if (ret_service == IO_OBJECT_NULL)
 		return IRECV_E_UNABLE_TO_CONNECT;
-
-	if (ecid > 0)
-		debug("found device with ECID " _FMT_016llx "\n", (unsigned long long)ecid);
 
 	return iokit_usb_open_service(pclient, ret_service);
 }
@@ -1318,7 +1324,6 @@ IRECV_API irecv_error_t irecv_usb_set_configuration(irecv_client_t client, int c
 		}
 	}
 #endif
-
 	client->usb_config = configuration;
 #endif
 
@@ -1420,8 +1425,10 @@ IRECV_API irecv_error_t irecv_usb_set_interface(irecv_client_t client, int usb_i
 		return IRECV_E_USB_INTERFACE;
 	}
 
-	if (libusb_set_interface_alt_setting(client->handle, usb_interface, usb_alt_interface) < 0) {
-		return IRECV_E_USB_INTERFACE;
+	if (usb_interface == 1) {
+		if (libusb_set_interface_alt_setting(client->handle, usb_interface, usb_alt_interface) < 0) {
+			return IRECV_E_USB_INTERFACE;
+		}
 	}
 #endif
 #else
